@@ -51,8 +51,20 @@ def save_entity(category, name):
         print(f"DB Error: {e}")
      finally:
         conn.close()
-    
-   # Initialize the DB when this script is run
+
+def save_event(sentence, action):
+    """Saves a plot event to the history."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO events (sentence, action) VALUES (?, ?)", (sentence, action))
+        conn.commit()
+    except Exception as e:
+        print(f"DB Error: {e}")
+    finally:
+        conn.close()
+
+# Initialize the DB when this script is run
 if __name__ == "__main__":
     initialize_db()
     print("Seshat Database Initialized.")
