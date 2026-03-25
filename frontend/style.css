@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;700&display=swap');
+
+:root {
+    --bg-paper: #fdfaf3;      /* Eggshell / Parchment feel */
+    --sidebar-bg: #f4f1ea;    /* Slightly darker paper */
+    --ink: #2c2c2c;           /* Deep ink grey */
+    --accent-gold: #b8860b;   /* For the 'Key' and status */
+    --border: #e0ddd5;
+}
+
+/* Dark Mode Overrides (Optional - Add media query later) */
+[data-theme="dark"] {
+    --bg-paper: #1a1a1a;
+    --sidebar-bg: #121212;
+    --ink: #d4d4d4;
+    --accent-gold: #ffcc33;
+    --border: #333;
+}
+
+body {
+    background-color: var(--bg-paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif; /* UI is clean */
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* --- THE SCRIBE'S DESK (Editor) --- */
+.editor-area {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 100px; /* Wide margins like a manuscript */
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--bg-paper);
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+#filename {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    color: var(--accent-gold);
+    font-family: 'EB Garamond', serif;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    outline: none;
+}
+
+#editor {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: 'EB Garamond', serif; /* The "Writing" font */
+    font-size: 1.4rem;
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+}
+
+/* --- THE WORLD BIBLE (Sidebar) --- */
+.sidebar {
+    flex: 1;
+    background-color: var(--sidebar-bg);
+    border-left: 1px solid var(--border);
+    padding: 30px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+
+.sidebar h2 {
+    font-family: 'EB Garamond', serif;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--accent-gold);
+    padding-bottom: 10px;
+}
+
+.sidebar h3 {
+    margin-top: 30px;
+    color: #777;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.event-item {
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 2px solid var(--accent-gold);
+}
+
+.action-tag {
+    color: var(--accent-gold);
+    font-weight: bold;
+    text-transform: capitalize;
+}

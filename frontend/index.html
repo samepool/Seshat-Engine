@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seshat | Creative Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <main class="editor-area">
+            <input type="text" id="filename" placeholder="Chapter Title..." value="Chapter_1">
+            <textarea id="editor" placeholder="Start writing your masterpiece..."></textarea>
+            <div id="status-bar">Status: Ready</div>
+        </main>
+        <aside class="sidbar">
+            <h2>The Key</h2>
+            <div id="bible-content">
+                <section>
+                    <h3>Characters</h3>
+                    <ul id="char-list"></ul>
+                </section>
+                <section>
+                    <h3>Places</h3>
+                    <ul id="place-list"></ul>
+                </section>
+                <section>
+                    <h3>Event</h3>
+                    <ul id="event-list"></ul>
+                </section>
+            </div>
+        </aside>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
