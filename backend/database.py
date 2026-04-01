@@ -64,6 +64,19 @@ def save_event(sentence, action):
     finally:
         conn.close()
 
+def get_all_lore():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM characters")
+    chars = [row[0] for row in cursor.fetchall()]
+    cursor.execute("SELECT name FROM places")
+    places =[row[0] for row in cursor.fetchall()]
+    cursor.execute("SELECT sentence, action FROM events ORDER BY timestamp DESC LIMIT 10")
+    events = [{"context": row[0], "main_action": row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return {"characters": chars, "places": places, "events": events}
+
+
 # Initialize the DB when this script is run
 if __name__ == "__main__":
     initialize_db()
