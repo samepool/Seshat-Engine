@@ -105,3 +105,79 @@ body {
     font-weight: bold;
     text-transform: capitalize;
 }
+
+/* --- LORE REGISTRY & INPUTS --- */
+.lore-registry, .library-section {
+    margin-top: 30px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.input-group input, .input-group select {
+    background: var(--bg-paper);
+    border: 1px solid var(--border);
+    padding: 8px;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    border-radius: 4px;
+}
+
+.input-group button, .editor-footer button {
+    background-color: var(--accent-gold);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+}
+
+.input-group button:hover {
+    opacity: 0.8;
+}
+
+/* --- LIBRARY LIST --- */
+#chapter-list {
+    list-style: none;
+    padding: 0;
+}
+
+.chapter-link {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.chapter-link:hover {
+    background-color: var(--border);
+    color: var(--accent-gold);
+}
+
+.helper-text {
+    font-size: 0.7rem;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+/* --- LIST STYLING --- */
+ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}

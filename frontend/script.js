@@ -4,14 +4,16 @@ const editor = document.getElementById('editor');
 const filenameInput = document.getElementById('filename');
 const statusDisplay = document.getElementById('status-bar');
 
-//Listen for Typing
+// --- 1. THE AUTO-SAVE ENGINE (Debounce) ---
+// We wait 1.5 seconds after you stop typing to save. 
+// This prevents the server from being overwhelmed.
 editor.addEventListener('input', () => {
-    statusDisplay.innerText = "Status: Typing...";
-
+    statusDisplay.innerText = "Status: Writing...";
+    
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         syncWithSeshat();
-    }, 1500);
+    }, 1500); 
 });
 
 async function syncWithSeshat() {
@@ -19,6 +21,7 @@ async function syncWithSeshat() {
     const filename = filenameInput.value;
 
     if (!content.trim()) return;
+
     statusDisplay.innerText = "Status: Seshat is thinking...";
 
     try {
@@ -26,30 +29,98 @@ async function syncWithSeshat() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename, content })
-        })
+        });
 
-            const data = await response.json();
-            renderBible(data.analysis);
-            statusDisplay.innerText = "Status: Synced & Organied";
-        } catch (err) {
-            statusDisplay.innerText = "Status: Connection Error";
-            console.error("Backend unreachable:", err);
-        }
+        const data = await response.json();
+        renderBible(data.analysis);
+        statusDisplay.innerText = "Status: Manuscript Saved & Synced";
+    } catch (err) {
+        statusDisplay.innerText = "Status: Connection Lost";
+        console.error("Backend Error:", err);
     }
-function renderBible (analysis) {
+}
+
+// --- 2. THE LORE REGISTRY (The 'Galbark' Fix) ---
+// This sends manual overrides to the Python "Entity Ruler"
+async function registerCustomLore() {
+    const name = document.getElementById('custom-name').value;
+    const type = document.getElementById('custom-type').value;
+
+    if (!name) return;
+
+    statusDisplay.innerText = `Status: Teaching Seshat about ${name}...`;
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/register_lore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, type })
+        });
+
+        if (response.ok) {
+            document.getElementById('custom-name').value = '';
+            statusDisplay.innerText = `Status: Learned ${name}`;
+            // Re-sync immediately to update the sidebar with the new knowledge
+            syncWithSeshat();
+        }
+    } catch (err) {
+        console.error("Lore Registration failed:", err);
+    }
+}
+
+// --- 3. THE LIBRARY (File Access) ---
+async function refreshLibrary() {
+    try {
+        const response = await fetch('http://127.0.0.1:8000/list_chapters');
+        const data = await response.json();
+        const list = document.getElementById('chapter-list');
+        
+        // Creates clickable list items for every .md file found
+        list.innerHTML = data.chapters.map(file => 
+            `<li onclick="loadChapter('${file}')" class="chapter-link">📄 ${file}</li>`
+        ).join('');
+        
+    } catch (err) {
+        console.error("Could not load library:", err);
+    }
+}
+
+async function loadChapter(filename) {
+    statusDisplay.innerText = `Status: Opening ${filename}...`;
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/load_chapter/${filename}`);
+        const data = await response.json();
+        
+        // Update the UI with the loaded file content
+        document.getElementById('filename').value = filename.replace('.md', '');
+        editor.value = data.content;
+        
+        statusDisplay.innerText = `Status: Loaded ${filename}`;
+        // Immediately run analysis so the sidebar matches the loaded text
+        syncWithSeshat();
+    } catch (err) {
+        console.error("Load failed:", err);
+    }
+}
+
+// --- 4. THE SIDEBAR RENDERER ---
+function renderBible(analysis) {
     const charList = document.getElementById('char-list');
     const placeList = document.getElementById('place-list');
     const eventList = document.getElementById('event-list');
 
-    // Update Characters
-    charList.innerHTML = analysis.characters.map(c => `<li>${c}</li>`).join('');
-
-    //Update places
-       placeList.innerHTML = analysis.places.map(p => `<li>${p}</li>`).join('');
-
-    //Update Events
-       eventList.innerHTML = analysis.events.map(e => `<li class="action-tag">${e.main_action || 'context'}</span>
-        <p>${e.context}</p>
+    // Update Characters and Places with simple icons
+    charList.innerHTML = analysis.characters.map(c => `<li>✨ ${c}</li>`).join('');
+    placeList.innerHTML = analysis.places.map(p => `<li>📍 ${p}</li>`).join('');
+    
+    // Update the Significance timeline
+    eventList.innerHTML = analysis.events.map(e => `
+        <li class="event-item">
+            <span class="action-tag">${e.main_action || 'context'}</span>
+            <p>${e.context}</p>
         </li>
-        `).join('');
+    `).join('');
 }
+
+// Automatically populate the library when the page first opens
+window.onload = refreshLibrary;
