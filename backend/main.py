@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .processor import analyze_writing # This connects Processer.py to the sytem
-from .database import save_entity, save_event, initialize_db
+from .database import save_entity, save_event, initialize_db, get_all_lore
 
 app = FastAPI (title="Seshat Engine")
 
@@ -33,6 +33,7 @@ class WritingSession(BaseModel):
 async def root():
     return {"message": "Seshat Backend is Online"}
 
+# --- ENDPOINT 1: SAVE & ANALYZE ---
 @app.post("/process_session")
 async def process_session(session: WritingSession):
     """
@@ -77,3 +78,24 @@ async def process_session(session: WritingSession):
        "saved_to": safe_name,
        "analysis": bible_data 
     }
+
+# --- ENDPOINT 2: LIST ALL SAVED CHAPTERS ---
+@app.get("/list_chapters")
+async def list_chapters():
+    files = [f for f in os.listdir(MANUSCRIPT_DIR) if f.endswith(".md")]
+    return {"chapters": files}
+
+# --- ENDPOINT 3: LOAD A SPECIFIC CHAPTER ---
+@app.get("/load_chapter/{filename}")
+async def load_chapter(filename: str):
+    file_path = os.path.join(MANUSCRIPT_DIR, filename)
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {"content": content}
+    raise HTTPException(status_code=404, detail="Chapter not found")
+
+
+@app.get("/get_bible")
+async def get_bible():
+    return get_all_lore()
