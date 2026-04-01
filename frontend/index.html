@@ -3,34 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seshat | Creative Assistant</title>
+    <title>Seshat | The Scribe's Engine</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <main class="editor-area">
-            <input type="text" id="filename" placeholder="Chapter Title..." value="Chapter_1">
-            <textarea id="editor" placeholder="Start writing your masterpiece..."></textarea>
-            <div id="status-bar">Status: Ready</div>
+            <header class="editor-header">
+                <input type="text" id="filename" placeholder="Chapter Title..." value="Chapter_1">
+                <div id="status-bar">Status: Ready to write</div>
+            </header>
+            
+            <textarea id="editor" placeholder="Begin your manuscript here..."></textarea>
+            
+            <footer class="editor-footer">
+                <button onclick="refreshLibrary()">📜 Open Library</button>
+            </footer>
         </main>
-        <aside class="sidbar">
-            <h2>The Key</h2>
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>The Key</h2>
+            </div>
+
             <div id="bible-content">
-                <section>
+                <section class="library-section">
+                    <h3>Library</h3>
+                    <ul id="chapter-list">
+                        </ul>
+                </section>
+
+                <section class="entities-section">
                     <h3>Characters</h3>
                     <ul id="char-list"></ul>
                 </section>
-                <section>
+
+                <section class="entities-section">
                     <h3>Places</h3>
                     <ul id="place-list"></ul>
                 </section>
-                <section>
-                    <h3>Event</h3>
+
+                <section class="events-section">
+                    <h3>Significance</h3>
                     <ul id="event-list"></ul>
+                </section>
+
+                <hr>
+
+                <section class="lore-registry">
+                    <h3>Prime the Brain</h3>
+                    <p class="helper-text">Teach Seshat irregular names:</p>
+                    <div class="input-group">
+                        <input type="text" id="custom-name" placeholder="e.g. Galbark">
+                        <select id="custom-type">
+                            <option value="PERSON">Character</option>
+                            <option value="GPE">Place</option>
+                        </select>
+                        <button id="register-btn" onclick="registerCustomLore()">Register</button>
+                    </div>
                 </section>
             </div>
         </aside>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
