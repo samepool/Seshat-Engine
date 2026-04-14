@@ -10,8 +10,18 @@
     <div class="container">
         <main class="editor-area">
             <header class="editor-header">
-                <input type="text" id="filename" placeholder="Chapter Title..." value="Chapter_1">
-                <div id="status-bar">Status: Ready to write</div>
+                <div class="path-inputs">
+                    <input type="text" id="project-name" placeholder="Book Title" value="my_story">
+                    <span></span>
+                    <input type="text" id="sub-folder" placeholder="Character Subfolder" value="">
+                </div>
+
+                <div class="title-row">
+                    <input type="text" id="filename" placeholder="Chapter Title" value="Chapter_1">
+                    <button onclick="newDocument()" class="icon-btn">🖋️ New Scroll</button>
+                </div>
+
+                <div id="status-bar">Status: Ready to Write</div>
             </header>
             
             <textarea id="editor" placeholder="Begin your manuscript here..."></textarea>

@@ -2,6 +2,8 @@ let debounceTimer;
 
 const editor = document.getElementById('editor');
 const filenameInput = document.getElementById('filename');
+const projectNameInput = document.getElementById('project-name')
+const subFolderInput = document.getElementById('sub-folder');
 const statusDisplay = document.getElementById('status-bar');
 
 // --- 1. THE AUTO-SAVE ENGINE (Debounce) ---
@@ -19,6 +21,8 @@ editor.addEventListener('input', () => {
 async function syncWithSeshat() {
     const content = editor.value;
     const filename = filenameInput.value;
+    const project = projectNameInput.value;
+    const subfolder = subFolderInput.value;
 
     if (!content.trim()) return;
 
@@ -28,12 +32,21 @@ async function syncWithSeshat() {
         const response = await fetch('http://127.0.0.1:8000/process_session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filename, content })
+            body: JSON.stringify({
+                project,
+                subfolder,
+                filename,
+                content 
+            })
         });
 
-        const data = await response.json();
-        renderBible(data.analysis);
-        statusDisplay.innerText = "Status: Manuscript Saved & Synced";
+        if (response.ok) {
+            const data = await response.json();
+            renderBible(data.analysis);
+
+            refreshLibrary();
+            statusDisplay.innerText = "Status: Manuscript Saved & Synced";
+        }
     } catch (err) {
         statusDisplay.innerText = "Status: Connection Lost";
         console.error("Backend Error:", err);
@@ -85,17 +98,23 @@ async function refreshLibrary() {
     }
 }
 
-async function loadChapter(filename) {
-    statusDisplay.innerText = `Status: Opening ${filename}...`;
+async function loadChapter(fullPath) {
+    statusDisplay.innerText = `Status: Opening ${fullPath}...`;
     try {
-        const response = await fetch(`http://127.0.0.1:8000/load_chapter/${filename}`);
+        const response = await fetch(`http://127.0.0.1:8000/load_chapter/${fullPath}`);
         const data = await response.json();
-        
-        // Update the UI with the loaded file content
-        document.getElementById('filename').value = filename.replace('.md', '');
+
+        const parts = fullPath.split('/');
+        const fileNameWithExt =  parts.pop();
+        const projectName = parts.shift() || "default";
+        const subFolder = parts.join('/');
+
+        projectNameInput.value = projectName;
+        subFolderInput.value = subFolder;
+        filenameInput.value = fileNameWithExt.replace('.md', '');
         editor.value = data.content;
         
-        statusDisplay.innerText = `Status: Loaded ${filename}`;
+        statusDisplay.innerText = `Status: Loaded ${fileNameWithExt}`;
         // Immediately run analysis so the sidebar matches the loaded text
         syncWithSeshat();
     } catch (err) {
@@ -103,7 +122,17 @@ async function loadChapter(filename) {
     }
 }
 
-// --- 4. THE SIDEBAR RENDERER ---
+// --- 4. The UI UTILITIES ---
+function newDocument() {
+    if (confirm("Start a new document?")) {
+        editor.value = "";
+        filenameInput.value = "New_Chapter";
+        statusDisplay.innerText = "Status: New Scroll Ready";
+        renderBible({ characters: [], places: [], events: [] });
+    }
+}
+
+// --- 5. THE SIDEBAR RENDERER ---
 function renderBible(analysis) {
     const charList = document.getElementById('char-list');
     const placeList = document.getElementById('place-list');

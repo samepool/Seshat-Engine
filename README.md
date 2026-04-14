@@ -116,3 +116,6 @@ Uvicorn[standard]: The Turbocharged Engine (Runs the server).
 SpaCy: The Brain (Reads and understands your story).
 
 Python-multipart: The Translator (Handles complex data/file inputs).
+
+
+---

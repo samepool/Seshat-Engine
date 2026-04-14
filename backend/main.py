@@ -26,6 +26,8 @@ if not os.path.exists(MANUSCRIPT_DIR):
 
 # Data structure for incoming writing sessions
 class WritingSession(BaseModel):
+    project: str = "default"
+    subfolder: str = ""
     filename: str
     content: str
 
@@ -46,11 +48,15 @@ async def process_session(session: WritingSession):
     2. Analyze the text for Who, What, Where, and Significance
     """
 
+    target_dir = os.path.join(MANUSCRIPT_DIR, session.project, session.subfolder)
+
+    os.makedirs(target_dir, exist_ok=True)
+
     safe_name = "".join([c for c in session.filename if c.isalnum() or c in (' ', '.', '_')]).strip()
-    if not (safe_filename_endswith := safe_name.lower().endswith(".md")):
+    if not safe_name.lower().endswith(".md"):
         safe_name += ".md"
     
-    file_path = os.path.join(MANUSCRIPT_DIR, safe_name)
+    file_path = os.path.join(target_dir, safe_name)
 
     try:
         with open(file_path, "w", encoding="utf-8") as f:
@@ -86,11 +92,18 @@ async def process_session(session: WritingSession):
 # --- ENDPOINT 2: LIST ALL SAVED CHAPTERS ---
 @app.get("/list_chapters")
 async def list_chapters():
-    files = [f for f in os.listdir(MANUSCRIPT_DIR) if f.endswith(".md")]
-    return {"chapters": files}
+    tree = []
+    # os.walk scans all subdirectories
+    for root, dirs, files in os.walk(MANUSCRIPT_DIR):
+        for file in files:
+            if file.endswith(".md"):
+                # Get the path relative to 'manuscript' folder
+                rel_path = os.path.relpath(os.path.join(root, file), MANUSCRIPT_DIR)
+                tree.append(rel_path)
+    return {"chapters": tree}
 
 # --- ENDPOINT 3: LOAD A SPECIFIC CHAPTER ---
-@app.get("/load_chapter/{filename}")
+@app.get("/load_chapter/{filename:path}")
 async def load_chapter(filename: str):
     file_path = os.path.join(MANUSCRIPT_DIR, filename)
     if os.path.exists(file_path):
