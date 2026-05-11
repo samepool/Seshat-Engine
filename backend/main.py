@@ -2,8 +2,8 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from .processor import analyze_writing # This connects Processer.py to the sytem
-from .database import save_entity, save_event, initialize_db, get_all_lore, add_custom_lore
+from processor import analyze_writing # This connects Processer.py to the sytem
+from database import save_entity, save_event, initialize_db, get_all_lore, add_custom_lore
 
 app = FastAPI (title="Seshat Engine")
 
