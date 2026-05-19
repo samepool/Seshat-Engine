@@ -1,3 +1,9 @@
+## ⚠️ Portfolio License Notice
+This repository is public strictly for employment evaluation, architectural review, 
+and portfolio assessment. It is **not** open-source software. Commercial or 
+production use of this code, logic, or engine architecture is strictly prohibited 
+under the terms of the attached `LICENSE` file.
+
 This is Seshat, a program that I wrote to help enforce that the creativity of man does not go quietly into the darkness due to the abilities offered by Everyone's desire to flood the market.
 
 What Seshat is intended to be: It is intended to be a writing assistant that compiles characters, data, and events into a world bible.
